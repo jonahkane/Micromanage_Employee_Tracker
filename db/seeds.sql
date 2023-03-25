@@ -1,4 +1,4 @@
-INSERT INTO department (department_name) VALUES ('Dispatch');
+INSERT INTO department (name) VALUES ('Dispatch');
 
 INSERT INTO
     role (title, salary, department_id)
@@ -11,4 +11,4 @@ INSERT INTO
         role_id,
         manager_id
     )
-VALUES ('Jonah', 'Kane', 2, null);
+VALUES ('Jonah', 'Kane', 1, null);

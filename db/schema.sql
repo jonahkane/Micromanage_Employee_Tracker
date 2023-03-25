@@ -7,7 +7,7 @@ use employee_db;
 CREATE TABLE
     department(
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        department_name VARCHAR(50) NOT NULL
+        name VARCHAR(50) NOT NULL
     );
 
 CREATE TABLE
