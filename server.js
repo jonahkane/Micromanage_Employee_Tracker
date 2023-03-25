@@ -29,7 +29,7 @@ function startApp() {
     mainMenu();
 }
 const exit = () => {
-console.log("Thank you, come again.");
+console.log("Thank you, come again. Please press Cntl + C to terminate the server.");
 }
 const mainMenu = () => {
     return inquirer.prompt([
@@ -108,13 +108,77 @@ db.query("Select * from employee", (err, res) => {
 const addDepartment = () => {
 // WHEN I choose to add a department
 // THEN I am prompted to enter the name of the department and that department is added to the database
-            
+return inquirer.prompt([
+    {
+        type: "input",
+        name: "name",
+        message: "What is the new department?",
+    },
+])            
+.then((answers) => {
+    db.query(
+        "Insert into department set?",
+    answers,
+    function (error) {
+        if (error) {
+            throw error;
+        }
+        console.log("New successfuly added");
+
+        startApp();
+})})
+    .catch((error) => {
+        if(error) {
+            console.log(error);
+        }
+    
+});
 }
 const addRole = () => {
 // WHEN I choose to add a role
 // THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
+db.query("Select * from department", (err, res) => {
+    if (err) throw err;
+})
+return inquirer.prompt([
+    {
+        type: "input",
+        name: "name",
+        message: "What is the new role you wish to add?",
+    },
+    {
+        type: "input",
+        name: "salary",
+        message: "What is the salary for this new role?",
+    },
+    {
+        type: "list",
+        name: "department",
+        message: "What department does this new role fall under?",
+        // choices: []
+// need to figure out how to get list of existing departments to populate here......
+    },
+])            
+.then((answers) => {
+    db.query(
+        "Insert into role set?",
+    answers,
+    function (error) {
+        if (error) {
+            throw error;
+        }
+        console.log("New role successfuly added");
 
+        startApp();
+})})
+    .catch((error) => {
+        if(error) {
+            console.log(error);
+        }
+    
+});
 }
+
 const addEmployee = () => {
 
 // WHEN I choose to add an employee
