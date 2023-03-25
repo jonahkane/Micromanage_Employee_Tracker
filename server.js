@@ -19,22 +19,38 @@ const db = mysql.createConnection(
       database: 'employee_db'
     },
     console.log(`Connected to employee_db database.`)
-  );
+);
   db.connect(function (err) {
     if (err) throw err;
-  });
-  
-  const mainMenu = () => {
+    startApp();
+});
+function startApp() {
+    console.log("Welcome to the worst app ever.");
+    mainMenu();
+}
+const exit = () => {
+console.log("Thank you, come again.");
+}
+const mainMenu = () => {
     return inquirer.prompt([
         {
-            type: 'list',
-            name: 'Main menu',
-            message: 'What would you like to do?',
-            choices: ['view all departments', 'view all roles', 'view all employees', 'add a department', 'add a role', 'add an employee', 'update an employee role']
-        }])
+            type: "list",
+            name: "options",
+            message: "What would you like to do?",
+            choices: [
+                "view all departments", 
+                "view all roles", 
+                "view all employees", 
+                "add a department", 
+                "add a role",
+                "add an employee", 
+                "update an employee role", 
+                "exit"]
+        }
+    ])
         .then(userChoice => {
-            switch (userChoice.menu) {
-                case 'view all departments':
+            switch (userChoice.options) {
+                case "view all departments":
                     viewDepartments();
                     break;
                 case 'view all roles':
@@ -57,17 +73,18 @@ const db = mysql.createConnection(
                     break;
                 default:
                     exit();
-}})}
+}})}   
 const viewDepartments = async () => {
 // WHEN I choose to view all departments
 // THEN I am presented with a formatted table showing department names and department ids
-db.query("Select * from department", (err, res) => {
-    if (err) throw err;
-    console.table(res);
-    console.log(table);
-    mainMenu();
-  });
-}
+ 
+    db.query("Select * from department", (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        mainMenu();
+    })
+};
+
 const viewRoles = () => {
 // WHEN I choose to view all roles
 // THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
@@ -108,7 +125,4 @@ const updateEmployeeRole = () => {
 // THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 
 }
-const exit = () => {
-console.log("Thank you, come again.");
-}
-mainMenu();
+// startApp();
