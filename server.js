@@ -21,9 +21,9 @@ const db = mysql.createConnection(
     },
     console.log(`Connected to employee_db database.`)
   );
-  db.connect(function (err) {
-    if (err) throw err;
-  });
+//   db.connect(function (err) {
+//     if (err) throw err;
+//   });
   
   const mainMenu = () => {
     return inquirer.prompt([
