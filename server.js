@@ -1,4 +1,4 @@
-const inquirier = require('inquirer');
+const inquirer = require('inquirer');
 const fs = require('fs');
 const express = require('express');
 const mysql = require('mysql2');
