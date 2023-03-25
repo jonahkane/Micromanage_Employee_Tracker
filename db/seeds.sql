@@ -1,15 +1,16 @@
-INSERT INTO department (id, name) VALUES (1, Jonah Kane);
+INSERT INTO
+    department (id, name)
+VALUES (2, 'Full Stack Engineering');
 
 INSERT INTO
-    role (id, title, salary, departmentID)
-VALUES (1, Junior Developer, 100000, 123);
+    role (title, salary, department_id)
+VALUES ('Junior Developer', 100000, 3);
 
 INSERT INTO
     employee (
-        id,
-        first name,
-        last name,
-        role id,
-        manager id
+        first_name,
+        last_name,
+        role_id,
+        manager_id
     )
-VALUES (1, Jonah, Kane, JrDv, boss);
+VALUES ('Jonah', 'Kane', 4, 5);
