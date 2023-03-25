@@ -1,11 +1,15 @@
--- include a seeds.sql file to pre-populate your database
+INSERT INTO department (id, name) VALUES (1, Jonah Kane);
 
--- making the development of individual features much easier.
+INSERT INTO
+    role (id, title, salary, departmentID)
+VALUES (1, Junior Developer, 85000, 123);
 
-use DATABASE employee_db;
-
--- department -- id -- name
-
--- role -- id -- title -- salary -- departmentID
-
--- employee -- id -- first name -- last name -- role id -- manager id
+INSERT INTO
+    employee (
+        id,
+        first name,
+        last name,
+        role id,
+        manager id
+    )
+VALUES (1, Jonah, Kane, JrDv, boss);

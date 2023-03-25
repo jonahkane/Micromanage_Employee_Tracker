@@ -75,12 +75,22 @@ db.query("Select * from department", (err, res) => {
 const viewRoles = () => {
 // WHEN I choose to view all roles
 // THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
+db.query("Select * from role", (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    mainMenu();
+  });
 
             }
 
 const viewEmployees = () => {
 // WHEN I choose to view all employees
 // THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
+db.query("Select * from employee", (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    mainMenu();
+  });
 
 }
 
