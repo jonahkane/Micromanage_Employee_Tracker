@@ -2,7 +2,7 @@ INSERT INTO department (id, name) VALUES (1, Jonah Kane);
 
 INSERT INTO
     role (id, title, salary, departmentID)
-VALUES (1, Junior Developer, 85000, 123);
+VALUES (1, Junior Developer, 100000, 123);
 
 INSERT INTO
     employee (

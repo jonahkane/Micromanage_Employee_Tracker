@@ -95,10 +95,10 @@ db.query("Select * from employee", (err, res) => {
 }
 
 const addDepartment = () => {
-    
 // WHEN I choose to add a department
 // THEN I am prompted to enter the name of the department and that department is added to the database
-            }
+            
+}
 
 const addRole = () => {
 // WHEN I choose to add a role
