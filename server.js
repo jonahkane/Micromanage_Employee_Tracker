@@ -2,6 +2,7 @@ const inquirier = require('inquirer');
 const fs = require('fs');
 const express = require('express');
 const mysql = require('mysql2');
+const cTable = require('console.table');
 
 const PORT = process.env.PORT || 3001;
 const app = express()
@@ -18,8 +19,11 @@ const db = mysql.createConnection(
       password: 'Camaro99!',
       database: 'employee_db'
     },
-    console.log(`Connected to the employee_db database.`)
+    console.log(`Connected to employee_db database.`)
   );
+  db.connect(function (err) {
+    if (err) throw err;
+  });
   
   const mainMenu = () => {
     return inquirer.prompt([
@@ -60,8 +64,13 @@ const db = mysql.createConnection(
 const viewDepartments = () => {
 // WHEN I choose to view all departments
 // THEN I am presented with a formatted table showing department names and department ids
+db.query("Select * from department", (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    mainMenu();
+  });
+}
 
-            }
 
 const viewRoles = () => {
 // WHEN I choose to view all roles
@@ -100,6 +109,7 @@ const updateEmployeeRole = () => {
             }
 
 const exit = () => {
-
+console.log("Thank you, come again.");
             }
                                                                                                                     
+mainMenu();
