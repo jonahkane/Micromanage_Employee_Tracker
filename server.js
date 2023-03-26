@@ -114,8 +114,7 @@ return inquirer.prompt([
 ])            
 .then((answers) => {
     db.query(
-        "Insert into department set?",
-    answers,
+        "Insert into department set?", answers,
     function (error) {
         if (error) {
             throw error;
@@ -123,7 +122,9 @@ return inquirer.prompt([
         console.log("New successfuly added");
 
         mainMenu();
-})})
+}
+    );
+})
     .catch((error) => {
         if(error) {
             console.log(error);
@@ -135,7 +136,8 @@ const addRole = () => {
 
     db.query("Select * from department", (err, res) => {
     if (err) throw err;
-//need to build an array of department options here....
+let departmentz = res.map((x) => ({name: x.name, value: x.id}))
+// map((answers) => ({department_name: answers.department_id, value: answers.department_name}))
 return inquirer.prompt([
     {
         type: "input",
@@ -151,20 +153,19 @@ return inquirer.prompt([
         type: "list",
         name: "department_id",
         message: "What department does this new role fall under?",
-        choices: res.map((department) => department.name),
- // this is where would would input the array we built above
+        choices: departmentz,
     },
 ])            
 .then((answers) => {
-    let department = res.find((department) => department.name === answers.department_id);
-    db.query(
-        "Insert into role set?", {
-        title: answers.title,
-        salary: answers.salary,
-        department_id: department.id,
+    db.query("Insert into role set?", answers,
+    // {job_title: answers.job_title, salary: answers.salary, department_id: answers.department_id},
+        function(err) {
+            if (err) {
+                throw err;
+            }
+            console.log("New role successfuly added");
+            mainMenu();
         });
-        console.log("New role successfuly added");
-        mainMenu();
     });
 });
 }

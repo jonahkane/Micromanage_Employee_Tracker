@@ -1,7 +1,11 @@
-INSERT INTO department (name) VALUES ('Dispatch');
+INSERT INTO department (department_name) VALUES ('Dispatch');
 
 INSERT INTO
-    role (title, salary, department_id)
+    role (
+        job_title,
+        salary,
+        department_id
+    )
 VALUES ('Management', 100000, 1);
 
 INSERT INTO
