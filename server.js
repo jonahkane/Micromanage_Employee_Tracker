@@ -135,15 +135,14 @@ return inquirer.prompt([
 });
 }
 const addRole = () => {
-// WHEN I choose to add a role
-// THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-db.query("Select * from department", (err, res) => {
+
+    db.query("Select * from department", (err, res) => {
     if (err) throw err;
-})
+
 return inquirer.prompt([
     {
         type: "input",
-        name: "name",
+        name: "title",
         message: "What is the new role you wish to add?",
     },
     {
@@ -153,33 +152,32 @@ return inquirer.prompt([
     },
     {
         type: "list",
-        name: "department",
+        name: "department_id",
         message: "What department does this new role fall under?",
-        // choices: []
-// need to figure out how to get list of existing departments to populate here......
+        choices: res.map((department) => department.name),
+ 
     },
 ])            
 .then((answers) => {
+    let department = res.find((department) => department.name === answers.department_id);
     db.query(
-        "Insert into role set?",
-    answers,
-    function (error) {
-        if (error) {
-            throw error;
-        }
+        "Insert into role set?", {
+        title: answers.title,
+        salary: answers.salary,
+        // department_id: answers.department,
+        department_id: department.id,
+        });
         console.log("New role successfuly added");
-
         startApp();
-})})
-    .catch((error) => {
-        if(error) {
-            console.log(error);
-        }
-    
+    });
 });
-}
-
+} 
 const addEmployee = () => {
+    // id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    // first_name VARCHAR(50),
+    // last_name VARCHAR(50),
+    // role_id INT,
+    // manager_id INT,
 
 // WHEN I choose to add an employee
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
@@ -189,4 +187,3 @@ const updateEmployeeRole = () => {
 // THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 
 }
-// startApp();
