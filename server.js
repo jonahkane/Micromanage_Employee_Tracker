@@ -28,9 +28,6 @@ function startApp() {
     console.log("Welcome to the worst app ever.");
     mainMenu();
 }
-const exit = () => {
-console.log("Thank you, come again. Please press Cntl + C to terminate the server.");
-}
 const mainMenu = () => {
     return inquirer.prompt([
         {
@@ -239,3 +236,9 @@ const updateEmployeeRole = () => {
 // THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 
 }
+
+const exit = () => {
+    console.log("Thank you, come again.");
+    process.exit();
+    }
+    
