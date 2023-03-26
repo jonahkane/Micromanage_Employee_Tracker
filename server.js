@@ -125,7 +125,7 @@ return inquirer.prompt([
         }
         console.log("New successfuly added");
 
-        startApp();
+        mainMenu();
 })})
     .catch((error) => {
         if(error) {
@@ -138,7 +138,7 @@ const addRole = () => {
 
     db.query("Select * from department", (err, res) => {
     if (err) throw err;
-
+//need to build an array of department options here....
 return inquirer.prompt([
     {
         type: "input",
@@ -155,7 +155,7 @@ return inquirer.prompt([
         name: "department_id",
         message: "What department does this new role fall under?",
         choices: res.map((department) => department.name),
- 
+ // this is where would would input the array we built above
     },
 ])            
 .then((answers) => {
@@ -164,24 +164,76 @@ return inquirer.prompt([
         "Insert into role set?", {
         title: answers.title,
         salary: answers.salary,
-        // department_id: answers.department,
         department_id: department.id,
         });
         console.log("New role successfuly added");
-        startApp();
+        mainMenu();
     });
 });
-} 
-const addEmployee = () => {
-    // id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    // first_name VARCHAR(50),
-    // last_name VARCHAR(50),
-    // role_id INT,
-    // manager_id INT,
-
-// WHEN I choose to add an employee
-// THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
 }
+const addEmployee = () => {
+    db.query("Select * from role", (err, roleRes) => {
+        if (err) throw err;
+        let rolez = roleRes.map((answers) => ({ name: answers.title, value: answers.id }));
+
+        db.query("SELECT * FROM employee", (err, empRes) => {
+            if (err) throw err;
+            let employeez = empRes.map((answers) => ({name: answers.first_name, value: answers.id,}));
+            return inquirer.prompt([
+        {
+            type: "input",
+            name: "first_name",
+            message: "What is the first name of the employee you wish to add?",
+        },
+        {
+            type: "input",
+            name: "last_name",
+            message: "What is the last name of the employee you wish to add?",
+        },
+        {
+            type: "list",
+            name: "role_id",
+            message: "What is the new employees role?",
+            choices: rolez,     
+        },
+        {
+            type: "list",
+            name: "manager_id",
+            message: "What manager does this new employee fall under?",
+            choices: employeez,     
+        },
+    ])              
+    .then((answers) => {
+        db.query(
+            "Insert into employee set?", {
+            first_name: answers.first_name,
+            last_name: answers.last_name,
+            role_id: answers.role_id,
+            manager_id: answers.role_id,
+            },
+            // answers,
+            function (err) {
+                if (err) {
+                    throw err;
+                }
+                console.log("New employee successfuly added");
+                mainMenu();
+            }
+        
+        );
+        })
+        .catch((err) => {
+            if (err) {
+                console.log(err);
+            }
+        });
+    });
+    });
+} 
+
+  
+
+
 const updateEmployeeRole = () => {
 // WHEN I choose to update an employee role
 // THEN I am prompted to select an employee to update and their new role and this information is updated in the database
