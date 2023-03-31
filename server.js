@@ -3,7 +3,7 @@ const fs = require('fs');
 const express = require('express');
 const mysql = require('mysql2');
 const cTable = require('console.table');
-const { table } = require('console');
+// const { table } = require('console');
 
 const PORT = process.env.PORT || 3001;
 const app = express()
@@ -108,18 +108,18 @@ const addDepartment = () => {
 return inquirer.prompt([
     {
         type: "input",
-        name: "name",
+        name: "department_name",
         message: "What is the new department?",
     },
 ])            
 .then((answers) => {
     db.query(
         "Insert into department set?", answers,
-    function (error) {
-        if (error) {
-            throw error;
+    function (err) {
+        if (err) {
+            throw err;
         }
-        console.log("New successfuly added");
+        console.log("New department successfuly added");
 
         mainMenu();
 }
@@ -136,12 +136,11 @@ const addRole = () => {
 
     db.query("Select * from department", (err, res) => {
     if (err) throw err;
-let departmentz = res.map((x) => ({name: x.name, value: x.id}))
-// map((answers) => ({department_name: answers.department_id, value: answers.department_name}))
+
 return inquirer.prompt([
     {
         type: "input",
-        name: "title",
+        name: "job_title",
         message: "What is the new role you wish to add?",
     },
     {
@@ -153,12 +152,17 @@ return inquirer.prompt([
         type: "list",
         name: "department_id",
         message: "What department does this new role fall under?",
-        choices: departmentz,
-    },
+        //figure out how to replace the ID with the department name but still feed the data back into the proper field
+        choices: res.map((answers) => ({name: answers.department_name, value:answers.id})
+        )}
 ])            
 .then((answers) => {
-    db.query("Insert into role set?", answers,
-    // {job_title: answers.job_title, salary: answers.salary, department_id: answers.department_id},
+    db.query(
+        "Insert into role set?", {
+            job_title: answers.job_title,
+            salary: answers.salary,
+            department_id: answers.department_id
+        },
         function(err) {
             if (err) {
                 throw err;
@@ -170,13 +174,18 @@ return inquirer.prompt([
 });
 }
 const addEmployee = () => {
-    db.query("Select * from role", (err, roleRes) => {
+    db.query("SELECT * FROM role", (err, roleRes) => {
         if (err) throw err;
-        let rolez = roleRes.map((answers) => ({ name: answers.title, value: answers.id }));
+    
+    db.query("SELECT * FROM employee", (err, empRes) => {
+        if (err) throw err;
+        // let emArr = employeeResults.map((x) => ({name: x.first_name, value: x.id,}));
+  
+        // let rolez = roleRes.map((answers) => ({ name: answers.title, value: answers.id }));
 
-        db.query("SELECT * FROM employee", (err, empRes) => {
-            if (err) throw err;
-            let employeez = empRes.map((answers) => ({name: answers.first_name, value: answers.id,}));
+        // db.query("SELECT * FROM employee", (err, empRes) => {
+        //     if (err) throw err;
+            // let employeez = empRes.map((answers) => ({name: answers.first_name, value: answers.id,}));
             return inquirer.prompt([
         {
             type: "input",
@@ -192,24 +201,28 @@ const addEmployee = () => {
             type: "list",
             name: "role_id",
             message: "What is the new employees role?",
-            choices: rolez,     
+            choices: roleRes.map((answers) => ({name: answers.job_title, value: answers.id}))
+            
         },
         {
             type: "list",
             name: "manager_id",
             message: "What manager does this new employee fall under?",
-            choices: employeez,     
+            choices: empRes.map((answers) => ({name: answers.first_name, value: answers.id,}))
+
+
+            // choices: empRes.map((employee) => employee.manager_name),    
         },
     ])              
     .then((answers) => {
         db.query(
-            "Insert into employee set?", {
-            first_name: answers.first_name,
-            last_name: answers.last_name,
-            role_id: answers.role_id,
-            manager_id: answers.role_id,
-            },
-            // answers,
+            "Insert into employee set?", 
+            // first_name: answers.first_name,
+            // last_name: answers.last_name,
+            // job_title: answers.job_title,
+            // manager_name: answers.manager_id,
+            // },
+            answers,
             function (err) {
                 if (err) {
                     throw err;
@@ -228,10 +241,6 @@ const addEmployee = () => {
     });
     });
 } 
-
-  
-
-
 const updateEmployeeRole = () => {
 // WHEN I choose to update an employee role
 // THEN I am prompted to select an employee to update and their new role and this information is updated in the database
