@@ -3,6 +3,7 @@ const fs = require('fs');
 const express = require('express');
 const mysql = require('mysql2');
 const cTable = require('console.table');
+const { log } = require('console');
 // const { table } = require('console');
 
 const PORT = process.env.PORT || 3001;
@@ -81,7 +82,6 @@ const viewDepartments = async () => {
         mainMenu();
     })
 };
-
 const viewRoles = () => {
 // WHEN I choose to view all roles
 // THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
@@ -158,11 +158,11 @@ return inquirer.prompt([
 ])            
 .then((answers) => {
     db.query(
-        "Insert into role set?", {
-            job_title: answers.job_title,
-            salary: answers.salary,
-            department_id: answers.department_id
-        },
+        "Insert into role set?", answers,
+            // job_title: answers.job_title,
+            // salary: answers.salary,
+            // department_id: answers.department_id
+        
         function(err) {
             if (err) {
                 throw err;
@@ -202,7 +202,6 @@ const addEmployee = () => {
             name: "role_id",
             message: "What is the new employees role?",
             choices: roleRes.map((answers) => ({name: answers.job_title, value: answers.id}))
-            
         },
         {
             type: "list",
@@ -244,11 +243,59 @@ const addEmployee = () => {
 const updateEmployeeRole = () => {
 // WHEN I choose to update an employee role
 // THEN I am prompted to select an employee to update and their new role and this information is updated in the database
+db.query("SELECT * FROM role" , (err, roleRes) => {
+    if (err) throw err;
 
+db.query("SELECT * FROM employee" , (err, empRes) => {
+    if (err) throw err;
+
+return inquirer.prompt([
+    {
+      type: "list",
+      name: "employee_id",
+      message: "Which employee's role would you like to upate?",
+      choices: empRes.map((answers) => ({name: answers.first_name, value: answers.employee_id})),
+},
+    {
+      type: "list",
+      name: "role_id",
+      message: "What is the employee's new role name?",
+      choices: roleRes.map((answers) => ({name: answers.job_title, value: answers.role_id})),
 }
+  ])
+  .then((answers) => {
+    // let em = answers.id;
+    // let newRole = answers.role_id;
+    db.query(
+      `UPDATE employee SET role_id = ${answers.role_id} WHERE employee_id = ${answers.employee_id}`,
+    //   `UPDATE employee SET role_id = ${newRole} WHERE employee_id = ${em}`,
+
+      answers,
+      function (err) {
+        if (err) {
+          throw err;
+        }
+        console.log("updated emplyoee's role");
+        mainMenu(); // workflow - want within callback
+      }
+    );
+  })
+  .catch((error) => {
+    if (error) {
+      console.log(error);
+    }
+  });
+});
+});
+}
+
+
+
+
+
+
 
 const exit = () => {
     console.log("Thank you, come again.");
     process.exit();
-    }
-    
+}
