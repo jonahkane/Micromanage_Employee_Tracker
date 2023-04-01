@@ -1,3 +1,5 @@
+-- the seeds file is used to populate the database and tables with starter information
+
 INSERT INTO
     department (
         department_id,
