@@ -1,16 +1,13 @@
 -- the seeds file is used to populate the database and tables with starter information
 
 INSERT INTO
-    department (
-        department_id,
-        department_name
-    )
+    department (id, name)
 VALUES (1, "Dispatch"), (2, "Customer Service"), (3, "Sales"), (4, "Quality Control");
 
 INSERT INTO
     role (
-        role_id,
-        job_title,
+        id,
+        title,
         salary,
         department_id
     )
@@ -18,7 +15,7 @@ VALUES (1, "Dispatcher", 50000, 1), (2, "CSR", 40000, 2), (3, "Sales Person", 60
 
 INSERT INTO
     employee (
-        employee_id,
+        id,
         first_name,
         last_name,
         role_id,

@@ -2,9 +2,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const express = require('express');
 const mysql = require('mysql2');
-const cTable = require('console.table');
 
-const PORT = process.env.PORT || 3001;
 const app = express()
 
 app.use(express.urlencoded({ extended: false }));
@@ -16,6 +14,7 @@ const db = mysql.createConnection(
       user: 'root',
       password: 'Camaro99!',
       database: 'employee_db'
+      
     },
     console.log(`Connected to employee_db database.`)
 );
@@ -41,6 +40,7 @@ const mainMenu = () => {
                 "add a role",
                 "add an employee", 
                 "update an employee role", 
+                "New view all departments",
                 "exit"]
         }
     ])
@@ -67,13 +67,13 @@ const mainMenu = () => {
                 case 'update an employee role':
                     updateEmployeeRole();
                     break;
+                case 'New function':
+                    newFunction();
+                    break;
                 default:
                     exit();
 }})}   
 const viewDepartments = async () => {
-// WHEN I choose to view all departments
-// THEN I am presented with a formatted table showing department names and department ids
- 
     db.query("Select * from department", (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -81,8 +81,6 @@ const viewDepartments = async () => {
     })
 };
 const viewRoles = () => {
-// WHEN I choose to view all roles
-// THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
 db.query("Select * from role", (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -91,8 +89,6 @@ db.query("Select * from role", (err, res) => {
 
 }
 const viewEmployees = () => {
-// WHEN I choose to view all employees
-// THEN I am presented with a formatted table showing employee data, including employee ids, first names, last names, job titles, departments, salaries, and managers that the employees report to
 db.query("Select * from employee", (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -101,12 +97,10 @@ db.query("Select * from employee", (err, res) => {
 
 }
 const addDepartment = () => {
-// WHEN I choose to add a department
-// THEN I am prompted to enter the name of the department and that department is added to the database
 return inquirer.prompt([
     {
         type: "input",
-        name: "department_name",
+        name: "name",
         message: "What is the new department?",
     },
 ])            
@@ -138,7 +132,7 @@ const addRole = () => {
 return inquirer.prompt([
     {
         type: "input",
-        name: "job_title",
+        name: "title",
         message: "What is the new role you wish to add?",
     },
     {
@@ -151,7 +145,7 @@ return inquirer.prompt([
         name: "department_id",
         message: "What department does this new role fall under?",
         //figure out how to replace the ID with the department name but still feed the data back into the proper field
-        choices: res.map((answers) => ({name: answers.department_name, value:answers.id})
+        choices: res.map((answers) => ({name: answers.name, value:answers.id})
         )}
 ])            
 .then((answers) => {
@@ -177,13 +171,6 @@ const addEmployee = () => {
     
     db.query("SELECT * FROM employee", (err, empRes) => {
         if (err) throw err;
-        // let emArr = employeeResults.map((x) => ({name: x.first_name, value: x.id,}));
-  
-        // let rolez = roleRes.map((answers) => ({ name: answers.title, value: answers.id }));
-
-        // db.query("SELECT * FROM employee", (err, empRes) => {
-        //     if (err) throw err;
-            // let employeez = empRes.map((answers) => ({name: answers.first_name, value: answers.id,}));
             return inquirer.prompt([
         {
             type: "input",
@@ -199,7 +186,7 @@ const addEmployee = () => {
             type: "list",
             name: "role_id",
             message: "What is the new employees role?",
-            choices: roleRes.map((answers) => ({name: answers.job_title, value: answers.id}))
+            choices: roleRes.map((answers) => ({name: answers.title, value: answers.id}))
         },
         {
             type: "list",
@@ -208,17 +195,11 @@ const addEmployee = () => {
             choices: empRes.map((answers) => ({name: answers.first_name, value: answers.id,}))
 
 
-            // choices: empRes.map((employee) => employee.manager_name),    
         },
     ])              
     .then((answers) => {
         db.query(
             "Insert into employee set?", 
-            // first_name: answers.first_name,
-            // last_name: answers.last_name,
-            // job_title: answers.job_title,
-            // manager_name: answers.manager_id,
-            // },
             answers,
             function (err) {
                 if (err) {
@@ -239,8 +220,6 @@ const addEmployee = () => {
     });
 } 
 const updateEmployeeRole = () => {
-// WHEN I choose to update an employee role
-// THEN I am prompted to select an employee to update and their new role and this information is updated in the database
 db.query("SELECT * FROM role" , (err, roleRes) => {
     if (err) throw err;
 
@@ -250,23 +229,20 @@ db.query("SELECT * FROM employee" , (err, empRes) => {
 return inquirer.prompt([
     {
       type: "list",
-      name: "employee_id",
+      name: "id",
       message: "Which employee's role would you like to upate?",
-      choices: empRes.map((answers) => ({name: answers.first_name, value: answers.employee_id})),
+      choices: empRes.map((answers) => ({name: answers.first_name, value: answers.id})),
 },
     {
       type: "list",
       name: "role_id",
       message: "What is the employee's new role name?",
-      choices: roleRes.map((answers) => ({name: answers.job_title, value: answers.role_id})),
+      choices: roleRes.map((answers) => ({name: answers.title, value: answers.id})),
 }
   ])
   .then((answers) => {
-    // let em = answers.id;
-    // let newRole = answers.role_id;
     db.query(
-      `UPDATE employee SET role_id = ${answers.role_id} WHERE employee_id = ${answers.employee_id}`,
-    //   `UPDATE employee SET role_id = ${newRole} WHERE employee_id = ${em}`,
+      `UPDATE employee SET role_id = ${answers.role_id} WHERE id = ${answers.id}`,
 
       answers,
       function (err) {
@@ -274,7 +250,7 @@ return inquirer.prompt([
           throw err;
         }
         console.log("updated emplyoee's role");
-        mainMenu(); // workflow - want within callback
+        mainMenu(); 
       }
     );
   })
@@ -286,6 +262,20 @@ return inquirer.prompt([
 });
 });
 }
+const newFunction = () => {
+    console.log('Showing all roles...\n');
+
+  const sql = `SELECT role.id, role.title, department.name AS department
+               FROM role
+               INNER JOIN department ON role.department_id = department.id`;
+  
+  connection.promise().query(sql, (err, rows) => {
+    if (err) throw err; 
+    console.table(rows); 
+    mainMenu();
+  })
+}
+
 const exit = () => {
     console.log("Thank you, come again.");
     process.exit();
