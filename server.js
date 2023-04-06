@@ -23,7 +23,7 @@ const db = mysql.createConnection(
     startApp();
 });
 function startApp() {
-    console.log("Welcome to the worst app ever.");
+    console.log("Welcome to the Employee Manager App.");
     mainMenu();
 }
 const mainMenu = () => {
@@ -40,7 +40,6 @@ const mainMenu = () => {
                 "add a role",
                 "add an employee", 
                 "update an employee role", 
-                "New view all departments",
                 "exit"]
         }
     ])
@@ -74,14 +73,14 @@ const mainMenu = () => {
                     exit();
 }})}   
 const viewDepartments = async () => {
-    db.query("Select * from department", (err, res) => {
+    db.query("Select department.id as Department_id, department.name as Department_Name from department", (err, res) => {
         if (err) throw err;
         console.table(res);
         mainMenu();
     })
 };
 const viewRoles = () => {
-db.query("Select * from role", (err, res) => {
+db.query("Select role.title as Job_Title, department.name as Department_Name, role.salary as Salary from role left join department on role.department_id = department.id", (err, res) => {
     if (err) throw err;
     console.table(res);
     mainMenu();
@@ -89,7 +88,7 @@ db.query("Select * from role", (err, res) => {
 
 }
 const viewEmployees = () => {
-db.query("Select * from employee", (err, res) => {
+db.query("SELECT e.id, e.first_name as First_Name, e.last_name as Last_Name, r.title as Job_Title, d.name as Department_Name, r.salary as Salary, m.first_name as Mgr_First_Name, m.last_name as Mgr_Last_Name FROM employee e LEFT JOIN employee m ON e.manager_id = m.id LEFT JOIN role r ON e.role_id = r.id LEFT JOIN department d ON r.department_id = d.id", (err, res) => {
     if (err) throw err;
     console.table(res);
     mainMenu();
@@ -262,21 +261,10 @@ return inquirer.prompt([
 });
 });
 }
-const newFunction = () => {
-    console.log('Showing all roles...\n');
-
-  const sql = `SELECT role.id, role.title, department.name AS department
-               FROM role
-               INNER JOIN department ON role.department_id = department.id`;
-  
-  connection.promise().query(sql, (err, rows) => {
-    if (err) throw err; 
-    console.table(rows); 
-    mainMenu();
-  })
-}
 
 const exit = () => {
     console.log("Thank you, come again.");
     process.exit();
 }
+
+
