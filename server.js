@@ -1,14 +1,17 @@
+// required dependencies 
 const inquirer = require('inquirer');
 const fs = require('fs');
 const express = require('express');
 const mysql = require('mysql2');
 const dotenv = require('dotenv').config();
 
+// invoking express
 const app = express()
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+//using process.env to hide username and password and database name
 const db = mysql.createConnection(
     {
       host: 'localhost',
@@ -19,14 +22,18 @@ const db = mysql.createConnection(
     },
     console.log(`Connected to employee_db database.`)
 );
+//connecting app to sql db
   db.connect(function (err) {
     if (err) throw err;
     startApp();
 });
+// function runs when user launches app and simply greets them
 function startApp() {
     console.log("Welcome to the Employee Manager App.");
     mainMenu();
 }
+
+//main menu function lists out the options for the user to choose
 const mainMenu = () => {
     return inquirer.prompt([
         {
@@ -44,6 +51,7 @@ const mainMenu = () => {
                 "exit"]
         }
     ])
+    //upon chosing one of the options from the main menu, the app will cycle through the following options of functions to run
         .then(userChoice => {
             switch (userChoice.options) {
                 case "view all departments":
@@ -73,9 +81,11 @@ const mainMenu = () => {
                 default:
                     exit();
 }})}   
+// following functions will run sql commands within the sql shell in order to display data to the user
 const viewDepartments = async () => {
     db.query("Select department.id as Department_id, department.name as Department_Name from department", (err, res) => {
         if (err) throw err;
+        //console.table displays the data in a formatted easy to read fashion
         console.table(res);
         mainMenu();
     })
@@ -89,6 +99,7 @@ db.query("Select role.title as Job_Title, department.name as Department_Name, ro
 
 }
 const viewEmployees = () => {
+    //i really struggled with this next line of code and i must admit that i had plenty of help from my tutor on this.  
 db.query("SELECT e.id, e.first_name as First_Name, e.last_name as Last_Name, r.title as Job_Title, d.name as Department_Name, r.salary as Salary, m.first_name as Mgr_First_Name, m.last_name as Mgr_Last_Name FROM employee e LEFT JOIN employee m ON e.manager_id = m.id LEFT JOIN role r ON e.role_id = r.id LEFT JOIN department d ON r.department_id = d.id", (err, res) => {
     if (err) throw err;
     console.table(res);
@@ -96,6 +107,7 @@ db.query("SELECT e.id, e.first_name as First_Name, e.last_name as Last_Name, r.t
   });
 
 }
+//the rest of the functions below are self explanatory 
 const addDepartment = () => {
 return inquirer.prompt([
     {
@@ -144,17 +156,13 @@ return inquirer.prompt([
         type: "list",
         name: "department_id",
         message: "What department does this new role fall under?",
-        //figure out how to replace the ID with the department name but still feed the data back into the proper field
         choices: res.map((answers) => ({name: answers.name, value:answers.id})
         )}
 ])            
 .then((answers) => {
     db.query(
         "Insert into role set?", answers,
-            // job_title: answers.job_title,
-            // salary: answers.salary,
-            // department_id: answers.department_id
-        
+            
         function(err) {
             if (err) {
                 throw err;
