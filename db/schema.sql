@@ -8,8 +8,6 @@ use employee_db;
 
 -- the next few sections of code add tables to our data base with the variables provided by bootcamp assignment,
 
--- however, i did update a few pieces of information because i did not like the data names
-
 CREATE TABLE
     department(
         id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,

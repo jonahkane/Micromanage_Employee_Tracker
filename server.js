@@ -2,6 +2,7 @@ const inquirer = require('inquirer');
 const fs = require('fs');
 const express = require('express');
 const mysql = require('mysql2');
+const dotenv = require('dotenv').config();
 
 const app = express()
 
@@ -11,9 +12,9 @@ app.use(express.json());
 const db = mysql.createConnection(
     {
       host: 'localhost',
-      user: 'root',
-      password: 'Camaro99!',
-      database: 'employee_db'
+      user: process.env.user,
+      password: process.env.password,
+      database: process.env.database
       
     },
     console.log(`Connected to employee_db database.`)
